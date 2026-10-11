@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ company.brand_name }} - Location de Voitures en Algérie</title>
+    <!-- Tailwind CSS & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        :root { --primary: {{ company.theme_color }}; }
+        .bg-primary { background-color: var(--primary); }
+        .text-primary { color: var(--primary); }
+        .border-primary { border-color: var(--primary); }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3">
+                {% if company.logo_url %}
+                    <img src="{{ company.logo_url }}" class="h-12 w-auto object-contain" alt="Logo">
+                {% else %}
+                    <i class="fa-solid fa-car-side text-3xl text-primary"></i>
+                {% endif %}
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold text-slate-900 leading-tight">{{ company.brand_name }}</span>
+                    <span class="text-xs font-semibold text-primary tracking-widest">{{ company.brand_sub }}</span>
+                </div>
+            </a>
+
+            <nav class="hidden md:flex gap-8 font-medium text-slate-600">
+                <a href="#home" class="hover:text-primary transition"><i class="fa-solid fa-house"></i> Accueil</a>
+                <a href="#vehicles" class="hover:text-primary transition"><i class="fa-solid fa-car"></i> Véhicules</a>
+                <a href="#services" class="hover:text-primary transition"><i class="fa-solid fa-shield-halved"></i> Services</a>
+                <a href="#contact" class="hover:text-primary transition"><i class="fa-solid fa-envelope"></i> Contact</a>
+            </nav>
+
+            <a href="/admin" class="bg-blue-50 text-primary border border-blue-200 px-4 py-2 rounded-xl font-semibold hover:bg-primary hover:text-white transition flex items-center gap-2">
+                <i class="fa-solid fa-lock"></i> Espace Propriétaire
+            </a>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section id="home" class="relative text-white py-24 bg-slate-900 bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(15,23,42,0.95), rgba(15,23,42,0.7)), url('{{ company.banner_url if company.banner_url else 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=80' }}');">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="max-w-2xl">
+                <span class="inline-block bg-white/20 border border-white/30 text-xs px-3 py-1 rounded-full font-medium mb-4"><i class="fa-solid fa-star text-amber-400"></i> N°1 De La Location En Algérie</span>
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">Location de Voitures chez <span class="text-blue-400">{{ company.brand_name }}</span></h1>
+                <p class="text-slate-300 text-lg mb-8">Découvrez notre flotte de véhicules récents aux meilleurs prix en Dinars Algériens (DA). Service rapide et livraison sur toute l'Algérie.</p>
+
+                <div class="grid grid-cols-3 gap-6 pt-4 border-t border-slate-700">
+                    <div>
+                        <div class="text-2xl font-bold text-amber-400">+50</div>
+                        <div class="text-xs text-slate-400">Véhicules Disponibles</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-amber-400">58</div>
+                        <div class="text-xs text-slate-400">Wilayas Couvertes</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-amber-400">24/7</div>
+                        <div class="text-xs text-slate-400">Assistance Client</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search & Filters -->
+    <section class="max-w-7xl mx-auto px-4 -mt-8 relative z-10">
+        <div class="bg-white p-6 rounded-2xl shadow-xl flex flex-wrap md:flex-nowrap gap-4 items-center">
+            <div class="relative flex-1 min-w-[240px]">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" onkeyup="filterCars()" placeholder="Rechercher par modèle, wilaya..." class="w-full pl-11 pr-4 py-3 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <select id="categoryFilter" onchange="filterCars()" class="p-3 border border-slate-200 rounded-xl outline-none bg-white">
+                <option value="all">Toutes les catégories</option>
+                <option value="Économique">Économique</option>
+                <option value="Berline">Berline</option>
+                <option value="SUV / 4x4">SUV / 4x4</option>
+                <option value="Luxe / Sport">Luxe / Sport</option>
+                <option value="Utilitaire">Utilitaire</option>
+            </select>
+            <select id="transFilter" onchange="filterCars()" class="p-3 border border-slate-200 rounded-xl outline-none bg-white">
+                <option value="all">Toutes les boîtes</option>
+                <option value="Manuelle">Manuelle</option>
+                <option value="Automatique">Automatique</option>
+            </select>
+        </div>
+    </section>
+
+    <!-- Catalog -->
+    <section id="vehicles" class="max-w-7xl mx-auto px-4 py-16">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-slate-900">Notre Flotte Disponible</h2>
+            <p class="text-slate-500 mt-2">Réservez directement votre voiture en Dinars Algériens (DA)</p>
+        </div>
+
+        <div id="carsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for car in cars %}
+            <div class="car-card bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-md hover:shadow-xl transition flex flex-col" data-name="{{ car.name.lower() }}" data-location="{{ car.location.lower() }}" data-category="{{ car.category }}" data-trans="{{ car.transmission }}">
+                <div class="relative h-52 bg-slate-100">
+                    <img src="{{ car.image }}" class="w-full h-full object-cover" alt="{{ car.name }}">
+                    <span class="absolute top-3 right-3 text-xs font-semibold px-3 py-1 rounded-full {{ 'bg-emerald-100 text-emerald-700' if car.status == 'Disponible' else 'bg-amber-100 text-amber-700' }}">
+                        {{ car.status }}
+                    </span>
+                </div>
+                <div class="p-6 flex flex-col flex-1">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-xl font-bold text-slate-900">{{ car.name }}</h3>
+                        <span class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-600 font-medium">{{ car.category }}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs text-slate-500 my-4 py-3 border-y border-slate-100">
+                        <div><i class="fa-solid fa-gear text-primary mr-1"></i> {{ car.transmission }}</div>
+                        <div><i class="fa-solid fa-gas-pump text-primary mr-1"></i> {{ car.fuel }}</div>
+                        <div><i class="fa-solid fa-users text-primary mr-1"></i> {{ car.seats }} Places</div>
+                        <div><i class="fa-solid fa-location-dot text-primary mr-1"></i> {{ car.location }}</div>
+                    </div>
+                    <div class="flex justify-between items-center mt-auto pt-2">
+                        <div>
+                            <span class="text-2xl font-bold text-primary">{{ "{:,}".format(car.price) }} DA</span>
+                            <span class="text-xs text-slate-400 block">par jour</span>
+                        </div>
+                        <button onclick="openBookingModal('{{ car.id }}', '{{ car.name }}', '{{ car.price }}', '{{ car.image }}', '{{ car.category }}')" {{ 'disabled class="opacity-50 cursor-not-allowed bg-slate-300 text-slate-500 px-4 py-2 rounded-xl font-semibold"' if car.status != 'Disponible' else 'class="bg-primary text-white px-5 py-2.5 rounded-xl font-semibold hover:opacity-90 transition"' }}>
+                            {{ 'Réserver' if car.status == 'Disponible' else 'Non dispo' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Modal Booking -->
+    <div id="bookingModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeBookingModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 text-2xl">&times;</button>
+            <h3 class="text-xl font-bold text-slate-900 mb-1">Réservation de Véhicule</h3>
+            <p id="modalCarTitle" class="text-sm text-slate-500 mb-4"></p>
+
+            <form id="bookingForm" onsubmit="submitBooking(event)">
+                <input type="hidden" id="modalCarId">
+                <input type="hidden" id="modalCarNameInput">
+                <input type="hidden" id="modalCarPriceInput">
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nom Complet *</label>
+                        <input type="text" id="clientName" required placeholder="ex: Said Ziani" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Téléphone *</label>
+                        <input type="tel" id="clientPhone" required placeholder="0550 12 34 56" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Wilaya *</label>
+                        <input type="text" id="clientWilaya" required placeholder="Alger, Tizi Ouzou..." class="w-full p-2.5 border border-slate-200 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">N° Permis *</label>
+                        <input type="text" id="clientPermit" required placeholder="12/345678" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Date Début *</label>
+                        <input type="date" id="startDate" required onchange="calcTotal()" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Date Fin *</label>
+                        <input type="date" id="endDate" required onchange="calcTotal()" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm">
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl mb-4 text-sm">
+                    <div class="flex justify-between text-slate-600 mb-1">
+                        <span>Durée:</span>
+                        <span id="summaryDays" class="font-semibold text-slate-800">1 Jour(s)</span>
+                    </div>
+                    <div class="flex justify-between text-base font-bold text-primary pt-2 border-t border-blue-200">
+                        <span>Prix Total Estimé:</span>
+                        <span id="summaryTotal">0 DA</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-primary text-white py-3 rounded-xl font-bold hover:opacity-90 transition">
+                    <i class="fa-solid fa-paper-plane mr-1"></i> Envoyer & Recevoir l'Email de confirmation
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-white pt-12 pb-6 mt-16 border-t border-slate-800" id="contact">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-slate-800">
+            <div>
+                <h4 class="text-xl font-bold mb-3">{{ company.brand_name }}</h4>
+                <p class="text-slate-400 text-sm">Location de véhicules neufs et récents partout en Algérie. Service professionnel 7j/7.</p>
+            </div>
+            <div>
+                <h4 class="text-lg font-bold mb-3">Contact & Support</h4>
+                <p class="text-slate-300 text-sm mb-1"><i class="fa-solid fa-phone text-primary mr-2"></i> {{ company.phone1 }}</p>
+                <p class="text-slate-300 text-sm mb-1"><i class="fa-solid fa-phone text-primary mr-2"></i> {{ company.phone2 }}</p>
+                <p class="text-slate-300 text-sm mb-1"><i class="fa-solid fa-envelope text-primary mr-2"></i> {{ company.notification_email }}</p>
+                <p class="text-slate-300 text-sm"><i class="fa-solid fa-location-dot text-primary mr-2"></i> {{ company.address }}</p>
+            </div>
+            <div>
+                <h4 class="text-lg font-bold mb-3">Horaires</h4>
+                <p class="text-slate-400 text-sm">Lundi - Dimanche: 08:00 - 20:00</p>
+                <p class="text-slate-400 text-sm">Assistance Aéroport 24h/24</p>
+            </div>
+        </div>
+        <div class="text-center text-xs text-slate-500 pt-6">
+            &copy; 2026 {{ company.brand_name }} Rent Car - Tous droits réservés.
+        </div>
+    </footer>
+
+    <script>
+        const NOTIF_EMAIL = "{{ company.notification_email }}";
+
+        function filterCars() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const cat = document.getElementById('categoryFilter').value;
+            const trans = document.getElementById('transFilter').value;
+
+            document.querySelectorAll('.car-card').forEach(card => {
+                const name = card.dataset.name;
+                const loc = card.dataset.location;
+                const cCat = card.dataset.category;
+                const cTrans = card.dataset.trans;
+
+                const matchSearch = name.includes(search) || loc.includes(search);
+                const matchCat = (cat === 'all' || cCat === cat);
+                const matchTrans = (trans === 'all' || cTrans === trans);
+
+                card.style.display = (matchSearch && matchCat && matchTrans) ? 'flex' : 'none';
+            });
+        }
+
+        function openBookingModal(id, name, price, img, cat) {
+            document.getElementById('modalCarId').value = id;
+            document.getElementById('modalCarNameInput').value = name;
+            document.getElementById('modalCarPriceInput').value = price;
+            document.getElementById('modalCarTitle').innerText = name + ' (' + cat + ') - ' + parseInt(price).toLocaleString() + ' DA / Jour';
+
+            const today = new Date().toISOString().split('T')[0];
+            const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+            document.getElementById('startDate').value = today;
+            document.getElementById('endDate').value = tomorrow;
+
+            calcTotal();
+            document.getElementById('bookingModal').classList.remove('hidden');
+        }
+
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.add('hidden');
+        }
+
+        function calcTotal() {
+            const price = parseFloat(document.getElementById('modalCarPriceInput').value || 0);
+            const start = new Date(document.getElementById('startDate').value);
+            const end = new Date(document.getElementById('endDate').value);
+            let days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+            if (days <= 0) days = 1;
+
+            const total = days * price;
+            document.getElementById('summaryDays').innerText = days + ' Jour(s)';
+            document.getElementById('summaryTotal').innerText = total.toLocaleString() + ' DA';
+        }
+
+        async function submitBooking(e) {
+            e.preventDefault();
+            const carName = document.getElementById('modalCarNameInput').value;
+            const data = {
+                clientName: document.getElementById('clientName').value,
+                clientPhone: document.getElementById('clientPhone').value,
+                clientWilaya: document.getElementById('clientWilaya').value,
+                clientPermit: document.getElementById('clientPermit').value,
+                carName: carName,
+                startDate: document.getElementById('startDate').value,
+                endDate: document.getElementById('endDate').value,
+                totalPrice: document.getElementById('summaryTotal').innerText
+            };
+
+            const res = await fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                closeBookingModal();
+                
+                // Mailto trigger for immediate phone email notification
+                const subject = encodeURIComponent(`[Réservation] ${carName} - ${data.clientName}`);
+                const body = encodeURIComponent(
+                    `Nouvelle Réservation Client:
+
+` +
+                    `Nom: ${data.clientName}
+` +
+                    `Téléphone: ${data.clientPhone}
+` +
+                    `Wilaya: ${data.clientWilaya}
+` +
+                    `N° Permis: ${data.clientPermit}
+` +
+                    `Voiture: ${carName}
+` +
+                    `Période: Du ${data.startDate} Au ${data.endDate}
+` +
+                    `Total: ${data.totalPrice}
+`
+                );
+                window.open(`mailto:${NOTIF_EMAIL}?subject=${subject}&body=${body}`, '_blank');
+                alert('Réservation effectuée ! Un email de confirmation a été ouvert pour l'équipe.');
+            }
+        }
+    </script>
+</body>
+</html>
