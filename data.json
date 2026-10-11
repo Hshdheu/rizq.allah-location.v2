@@ -1,0 +1,89 @@
+{
+  "owner_password_hash": "scrypt:32768:8:1$2TA3hrMSBxdfJj5p$9b1972082b909014b209606c2cd307d2ef46e0670afea2f8a2386e9701ee07a63b5467e48f6273c6b659a59d5c5eec138679a13e48772f724e19d6cd6a869932",
+  "company_info": {
+    "brand_name": "Rizq Allah",
+    "brand_sub": "RENT CAR ALGERIE",
+    "phone1": "+213 557 74 29 09",
+    "phone2": "+213 781 92 73 19",
+    "notification_email": "saidziani567@gmail.com",
+    "address": "Tizi ouzou maatkas",
+    "theme_color": "#4c00ff",
+    "logo_url": "",
+    "banner_url": ""
+  },
+  "cars": [
+    {
+      "id": 1868009042,
+      "name": "T-Roc",
+      "category": "Luxe / Sport",
+      "price": 35000.0,
+      "transmission": "Automatique",
+      "fuel": "Essence",
+      "seats": 5,
+      "location": "69 wilaya ",
+      "status": "Disponible",
+      "image": "/static/uploads/1000140989.jpg"
+    },
+    {
+      "id": 3002724077,
+      "name": "Arona",
+      "category": "Luxe / Sport",
+      "price": 10000.0,
+      "transmission": "Manuelle",
+      "fuel": "Essence",
+      "seats": 5,
+      "location": "69 wilaya ",
+      "status": "Disponible",
+      "image": "/static/uploads/1000140990.jpg"
+    },
+    {
+      "id": 3187888309,
+      "name": "Kia ",
+      "category": "Économique",
+      "price": 7500.0,
+      "transmission": "Automatique",
+      "fuel": "Essence",
+      "seats": 5,
+      "location": "69 wilaya ",
+      "status": "Disponible",
+      "image": "/static/uploads/1000140991.jpg"
+    },
+    {
+      "id": 2176785803,
+      "name": "Peugeot 208",
+      "category": "Économique",
+      "price": 7000.0,
+      "transmission": "Manuelle",
+      "fuel": "Essence",
+      "seats": 5,
+      "location": "69 wilaya ",
+      "status": "Disponible",
+      "image": "/static/uploads/1000140986.webp"
+    },
+    {
+      "id": 226834632,
+      "name": "Citroën c3",
+      "category": "Économique",
+      "price": 6000.0,
+      "transmission": "Manuelle",
+      "fuel": "Essence",
+      "seats": 5,
+      "location": "69 wilaya ",
+      "status": "Disponible",
+      "image": "/static/uploads/1000140992.jpg"
+    },
+    {
+      "id": 2201986193,
+      "name": "Citroën c3",
+      "category": "Économique",
+      "price": 6000.0,
+      "transmission": "Manuelle",
+      "fuel": "Essence",
+      "seats": 5,
+      "location": "69 wilaya ",
+      "status": "Disponible",
+      "image": "/static/uploads/1000140987.jpg"
+    }
+  ],
+  "bookings": []
+}

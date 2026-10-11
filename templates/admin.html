@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Administration - {{ company.brand_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 text-slate-800 font-['Poppins']">
+
+    <!-- Top Admin Nav -->
+    <header class="bg-slate-900 text-white py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold flex items-center gap-2">
+                <i class="fa-solid fa-sliders text-blue-500"></i> Espace Gestion - {{ company.brand_name }}
+            </h1>
+            <div class="flex gap-3">
+                <a href="/" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-xl text-sm hover:bg-slate-700">Voir Côté Client</a>
+                <button onclick="logout()" class="bg-red-500/20 text-red-300 border border-red-500/30 px-4 py-2 rounded-xl text-sm hover:bg-red-500 hover:text-white transition">Déconnexion</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                <i class="fa-solid fa-car text-3xl text-blue-600"></i>
+                <div>
+                    <div class="text-2xl font-bold">{{ cars|length }}</div>
+                    <div class="text-xs text-slate-500">Total Véhicules</div>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                <i class="fa-solid fa-circle-check text-3xl text-emerald-600"></i>
+                <div>
+                    <div class="text-2xl font-bold">{{ cars|selectattr('status', 'equalto', 'Disponible')|list|length }}</div>
+                    <div class="text-xs text-slate-500">Disponibles</div>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                <i class="fa-solid fa-clock text-3xl text-amber-600"></i>
+                <div>
+                    <div class="text-2xl font-bold">{{ cars|selectattr('status', 'equalto', 'En Location')|list|length }}</div>
+                    <div class="text-xs text-slate-500">En Location</div>
+                </div>
+            </div>
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                <i class="fa-solid fa-calendar-check text-3xl text-sky-600"></i>
+                <div>
+                    <div class="text-2xl font-bold">{{ bookings|length }}</div>
+                    <div class="text-xs text-slate-500">Réservations</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Car Form -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-8">
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><i class="fa-solid fa-plus-circle text-blue-600"></i> Ajouter un Nouveau Véhicule</h2>
+            <form onsubmit="addCar(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <input type="text" name="name" required placeholder="Marque & Modèle (ex: Golf 8 R-Line)" class="p-2.5 border border-slate-200 rounded-xl text-sm">
+                <select name="category" class="p-2.5 border border-slate-200 rounded-xl text-sm">
+                    <option value="Économique">Économique</option>
+                    <option value="Berline">Berline</option>
+                    <option value="SUV / 4x4">SUV / 4x4</option>
+                    <option value="Luxe / Sport">Luxe / Sport</option>
+                    <option value="Utilitaire">Utilitaire</option>
+                </select>
+                <input type="number" name="price" required placeholder="Prix / Jour (DA)" class="p-2.5 border border-slate-200 rounded-xl text-sm">
+                <select name="transmission" class="p-2.5 border border-slate-200 rounded-xl text-sm">
+                    <option value="Manuelle">Manuelle</option>
+                    <option value="Automatique">Automatique</option>
+                </select>
+                <select name="fuel" class="p-2.5 border border-slate-200 rounded-xl text-sm">
+                    <option value="Essence">Essence</option>
+                    <option value="Gasoil (Diesel)">Gasoil (Diesel)</option>
+                    <option value="GPL (Sirghaz)">GPL (Sirghaz)</option>
+                    <option value="Hybride">Hybride</option>
+                </select>
+                <input type="text" name="location" required placeholder="Wilaya / Lieu" class="p-2.5 border border-slate-200 rounded-xl text-sm">
+                
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-semibold mb-1">Image du Véhicule (Fichier de votre téléphone/PC)</label>
+                    <input type="file" name="image_file" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+                <div class="flex items-end">
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2.5 rounded-xl font-bold hover:bg-blue-700 transition">Enregistrer le Véhicule</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Fleet Table -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-8 overflow-x-auto">
+            <h2 class="text-lg font-bold mb-4"><i class="fa-solid fa-car text-blue-600"></i> Flotte de Véhicules</h2>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 text-xs text-slate-500 border-b border-slate-200">
+                        <th class="p-3">Photo</th>
+                        <th class="p-3">Modèle</th>
+                        <th class="p-3">Catégorie</th>
+                        <th class="p-3">Prix/Jour (DA)</th>
+                        <th class="p-3">Wilaya</th>
+                        <th class="p-3">Statut</th>
+                        <th class="p-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for car in cars %}
+                    <tr class="border-b border-slate-100 text-sm">
+                        <td class="p-3"><img src="{{ car.image }}" class="w-12 h-9 object-cover rounded-md"></td>
+                        <td class="p-3 font-semibold">{{ car.name }}</td>
+                        <td class="p-3">{{ car.category }}</td>
+                        <td class="p-3 font-bold text-blue-600">{{ "{:,}".format(car.price) }} DA</td>
+                        <td class="p-3">{{ car.location }}</td>
+                        <td class="p-3">
+                            <span class="px-2 py-1 rounded-full text-xs font-semibold {{ 'bg-emerald-100 text-emerald-700' if car.status == 'Disponible' else 'bg-amber-100 text-amber-700' }}">
+                                {{ car.status }}
+                            </span>
+                        </td>
+                        <td class="p-3">
+                            <button onclick="deleteCar('{{ car.id }}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Settings & Customization -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <h2 class="text-lg font-bold mb-4"><i class="fa-solid fa-gear text-blue-600"></i> Paramètres, Design & Email</h2>
+            <form onsubmit="saveSettings(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Nom de l'Agence</label>
+                    <input type="text" name="brand_name" value="{{ company.brand_name }}" required class="w-full p-2.5 border border-slate-200 rounded-xl text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Email de Notification (Où recevoir les réservations)</label>
+                    <input type="email" name="notification_email" value="{{ company.notification_email }}" required class="w-full p-2.5 border border-slate-200 rounded-xl text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Téléphone Principal</label>
+                    <input type="text" name="phone1" value="{{ company.phone1 }}" required class="w-full p-2.5 border border-slate-200 rounded-xl text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Téléphone Secondaire</label>
+                    <input type="text" name="phone2" value="{{ company.phone2 }}" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Couleur Principale du Site</label>
+                    <input type="color" name="theme_color" value="{{ company.theme_color }}" class="w-full h-10 p-1 border border-slate-200 rounded-xl">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1">Changer le Logo (depuis votre appareil)</label>
+                    <input type="file" name="logo_file" accept="image/*" class="w-full text-sm text-slate-500">
+                </div>
+                <div class="md:col-span-2">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-blue-700 transition">Enregistrer la Configuration</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        async function logout() {
+            await fetch('/api/logout', {method: 'POST'});
+            window.location.reload();
+        }
+
+        async function addCar(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const res = await fetch('/api/cars', { method: 'POST', body: formData });
+            if (res.ok) {
+                alert('Véhicule ajouté !');
+                window.location.reload();
+            }
+        }
+
+        async function deleteCar(id) {
+            if (!confirm('Supprimer ce véhicule ?')) return;
+            const res = await fetch('/api/cars', {
+                method: 'DELETE',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({id: parseInt(id)})
+            });
+            if (res.ok) window.location.reload();
+        }
+
+        async function saveSettings(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const res = await fetch('/api/settings', { method: 'POST', body: formData });
+            if (res.ok) {
+                alert('Paramètres mis à jour !');
+                window.location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
